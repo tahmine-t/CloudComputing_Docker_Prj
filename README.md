@@ -42,7 +42,3 @@ This project is a practical exercise designed to familiarize with Docker by impl
 
 ## Authors
 - Tahmine Tavakoli, Elham Armin, Alireza Amini
-
----
-
-Feel free to adjust any specific details to match your project setup and choices.
