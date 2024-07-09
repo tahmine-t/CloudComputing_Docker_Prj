@@ -1,0 +1,46 @@
+services:
+  db:
+    restart: always
+    image: postgres:13
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  webapi:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # Limit the container to 50% of a single CPU
+          memory: 512M     # Limit the container to 512MB of RAM
+        reservations:
+          cpus: '0.25'     # Reserve 25% of a single CPU
+          memory: 256M     # Reserve 256MB of RAM
+          
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: myuser
+      DATABASE_PASS: mypassword
+      DATABASE_DB: mydatabase
+    depends_on:
+      - db
+
+  nginx:
+    restart: always
+    build:
+      context: ./nginxconfig
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/var/www/html/prj
+    depends_on:
+      - webapi
